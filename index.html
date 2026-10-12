@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digital Stick — Build your design</title>
+  <meta name="description" content="Design a two-character logo in your team's colours and put it on your hockey stick.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Bebas+Neue&family=Yellowtail&family=Alfa+Slab+One&family=Graduate&family=Kaushan+Script&family=Abril+Fatface&family=Fredoka:wght@700&family=Russo+One&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./">Digital Stick</a>
+
+      <nav class="nav" id="nav" aria-label="Main">
+        <a href="#about">About</a>
+        <a href="./" aria-current="page">Design</a>
+        <a href="#explore">Explore</a>
+      </nav>
+
+      <div class="header-icons">
+        <button class="icon-btn" id="cartBtn" type="button" aria-label="Bag">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9.5h14l-1.2 9.6a2 2 0 0 1-2 1.7H8.2a2 2 0 0 1-2-1.7L5 9.5Z"/><path d="M9 9.5V7a3 3 0 0 1 6 0v2.5"/></svg>
+          <span class="badge" id="cartCount" hidden>0</span>
+        </button>
+        <button class="icon-btn account-btn" type="button" aria-label="Account">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5Z"/></svg>
+        </button>
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Step 1: build the design -->
+    <section class="step" id="stepDesign" aria-labelledby="designTitle">
+      <div class="container layout">
+        <div class="preview-col">
+          <h1 class="step-title" id="designTitle">Build your design</h1>
+          <div class="preview-card">
+            <div class="logo-preview" id="logoPreview" role="img" aria-label="Logo preview"></div>
+          </div>
+        </div>
+
+        <form class="options" id="designForm" novalidate>
+          <div class="opt open" data-opt="text">
+            <button class="opt-head" type="button" aria-expanded="true">
+              <span class="opt-title" id="textLabel">Enter your numbers or initials</span>
+              <span class="opt-value" data-value="text"></span>
+              <span class="check" aria-hidden="true"></span>
+            </button>
+            <div class="opt-body">
+              <input class="text-input" id="textInput" type="text" maxlength="2" autocomplete="off"
+                     autocapitalize="characters" spellcheck="false" aria-labelledby="textLabel" aria-describedby="textHint">
+              <p class="hint" id="textHint"><sup>*</sup> Two character limit</p>
+            </div>
+          </div>
+
+          <div class="opt" data-opt="font">
+            <button class="opt-head" type="button" aria-expanded="false">
+              <span class="opt-title" id="fontLabel">Choose a font</span>
+              <span class="opt-value" data-value="font"></span>
+              <span class="check" aria-hidden="true"></span>
+            </button>
+            <div class="opt-body">
+              <div class="font-grid" id="fontGrid" role="radiogroup" aria-labelledby="fontLabel"></div>
+            </div>
+          </div>
+
+          <div class="opt" data-opt="fill">
+            <button class="opt-head" type="button" aria-expanded="false">
+              <span class="opt-title" id="fillLabel">Pick a colour</span>
+              <span class="opt-value" data-value="fill"></span>
+              <span class="check" aria-hidden="true"></span>
+            </button>
+            <div class="opt-body">
+              <p class="colour-name" id="fillName" aria-live="polite"></p>
+              <div class="swatches" id="fillSwatches" role="radiogroup" aria-labelledby="fillLabel"></div>
+            </div>
+          </div>
+
+          <div class="opt" data-opt="outline">
+            <button class="opt-head" type="button" aria-expanded="false">
+              <span class="opt-title" id="outlineLabel">Add an outline</span>
+              <span class="opt-value" data-value="outline"></span>
+              <span class="check" aria-hidden="true"></span>
+            </button>
+            <div class="opt-body">
+              <p class="colour-name" id="outlineName" aria-live="polite"></p>
+              <div class="swatches" id="outlineSwatches" role="radiogroup" aria-labelledby="outlineLabel"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="nextBtn" type="submit">Next</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Step 2: pick a pack and add to cart -->
+    <section class="step" id="stepOrder" aria-labelledby="orderTitle" hidden>
+      <div class="container layout">
+        <div class="preview-col">
+          <h1 class="step-title" id="orderTitle">Your design</h1>
+          <div class="preview-card carousel-card">
+            <div class="carousel" id="carousel" aria-roledescription="carousel" aria-label="Design previews">
+              <div class="slide" role="group" aria-roledescription="slide" aria-label="Sticker pack">
+                <div class="sheet" id="sheet"></div>
+              </div>
+              <div class="slide" role="group" aria-roledescription="slide" aria-label="Single sticker">
+                <div class="single" id="single"></div>
+              </div>
+              <div class="slide" role="group" aria-roledescription="slide" aria-label="On your stick">
+                <div class="on-stick" id="onStick"></div>
+              </div>
+            </div>
+          </div>
+          <div class="dots" id="dots" role="tablist" aria-label="Choose preview">
+            <button class="dot" type="button" role="tab" aria-label="Sticker pack" aria-selected="true"></button>
+            <button class="dot" type="button" role="tab" aria-label="Single sticker" aria-selected="false"></button>
+            <button class="dot" type="button" role="tab" aria-label="On your stick" aria-selected="false"></button>
+          </div>
+        </div>
+
+        <form class="options order-options" id="orderForm" novalidate>
+          <button class="back-link" id="backBtn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+            Edit design
+          </button>
+
+          <div class="opt open done">
+            <div class="opt-head static">
+              <span class="opt-title" id="qtyLabel">Select your quantity</span>
+              <span class="check" aria-hidden="true"></span>
+            </div>
+            <div class="opt-body">
+              <p class="desc">Designs are delivered in packs of stickers that are 1” x 1”, vinyl, and die-cut.</p>
+              <div class="qty-grid" id="qtyGrid" role="radiogroup" aria-labelledby="qtyLabel"></div>
+            </div>
+          </div>
+
+          <div class="checkout">
+            <label class="terms">
+              <input type="checkbox" id="termsBox">
+              <span>Please read and agree to the <a href="#terms" id="termsLink">terms and conditions.</a></span>
+            </label>
+            <p class="error" id="termsError" role="alert" hidden>Please agree to the terms and conditions first.</p>
+            <button class="btn primary" id="addBtn" type="submit">Add to cart</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart drawer -->
+  <dialog class="drawer" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="drawer-head">
+      <h2 id="cartTitle">Your bag</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Close bag">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <ul class="cart-items" id="cartItems"></ul>
+    <p class="cart-empty" id="cartEmpty">Your bag is empty. Go build a beauty.</p>
+    <div class="drawer-foot">
+      <div class="subtotal"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+      <button class="btn primary block" type="button" id="checkoutBtn" disabled>Checkout</button>
+    </div>
+  </dialog>
+
+  <!-- Terms -->
+  <dialog class="modal" id="termsDialog" aria-labelledby="termsTitle">
+    <h2 id="termsTitle">Terms and conditions</h2>
+    <p>Every Digital Stick pack is printed to order from the design you build. Because each design is custom, orders can't be cancelled once they've been sent to print.</p>
+    <p>Colour names refer to the team colours that inspired them. Digital Stick is not affiliated with, endorsed by, or sponsored by the NHL or any of its teams.</p>
+    <p>Stickers are 1” x 1” die-cut vinyl. Apply to a clean, dry stick and let them set before your next skate.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" type="button" data-close>Close</button>
+      <button class="btn primary" type="button" id="agreeBtn">I agree</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
