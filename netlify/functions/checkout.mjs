@@ -61,6 +61,7 @@ export default async (req) => {
   p.append('success_url', `${origin}/?paid={CHECKOUT_SESSION_ID}#thanks`);
   p.append('cancel_url', `${origin}/#checkout`);
   p.append('billing_address_collection', 'auto');
+  p.append('allow_promotion_codes', 'true');
   p.append('phone_number_collection[enabled]', 'false');
   ALLOWED_COUNTRIES.forEach((c, i) => p.append(`shipping_address_collection[allowed_countries][${i}]`, c));
 

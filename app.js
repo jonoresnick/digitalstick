@@ -78,7 +78,7 @@
   const CURRENCY = 'CAD';
 
   const OUTLINE_W = 7;   // in font-size-100 units
-  const DIECUT_W = 30;   // white sticker border, drawn behind the outline
+  const KEYLINE_W = 17;  // thin white border around the logo, like the printed stickers
   const CART_KEY = 'digitalstick.cart';
   const ORDER_KEY = 'digitalstick.lastOrder';
 
@@ -117,6 +117,7 @@
     fill: colourFor('#AF1E2D'),
     outline: colourFor('#192168'),
   };
+
   let pack = PACKS[1];
 
   (function readURL() {
@@ -155,12 +156,12 @@
   }
 
   // Returns { viewBox, body } so the logo can be dropped into a standalone or nested <svg>.
-  function logoParts(design, { dieCut = false } = {}) {
+  function logoParts(design, { keyline = 0 } = {}) {
     const font = fontFor(design.font);
     const text = design.text;
     const m = measure(text, font);
     const outlineW = design.outline ? OUTLINE_W : 0;
-    const pad = (dieCut ? DIECUT_W : outlineW) / 2 + 2;
+    const pad = Math.max(keyline, outlineW) / 2 + 2;
     const x = -m.left - pad;
     const y = -m.ascent - pad;
     const w = m.left + m.right + pad * 2;
@@ -168,8 +169,8 @@
 
     const textAttrs = `x="0" y="0" font-family="'${font.family}'" font-weight="${font.weight}" font-size="100" stroke-linejoin="round" stroke-linecap="round"`;
     let body = '';
-    if (dieCut) {
-      body += `<text ${textAttrs} fill="#fff" stroke="#fff" stroke-width="${DIECUT_W}">${text}</text>`;
+    if (keyline) {
+      body += `<text ${textAttrs} fill="#fff" stroke="#fff" stroke-width="${keyline}">${text}</text>`;
     }
     const stroke = design.outline
       ? ` stroke="${design.outline.hex}" stroke-width="${outlineW}" paint-order="stroke fill"`
@@ -181,14 +182,22 @@
 
   function logoSVG(design, opts = {}) {
     const { viewBox, body } = logoParts(design, opts);
-    const cls = opts.dieCut ? ' class="diecut"' : '';
-    return `<svg${cls} xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" aria-hidden="true">${body}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" aria-hidden="true">${body}</svg>`;
   }
 
   // Mirrors where players put it: a 1" square sticker on the lower shaft, above the flex/curve print.
+  // The product: a 1" black rounded square with the keylined logo centred on it.
+  function stickerSVG(design) {
+    const { viewBox, body } = logoParts(design, { keyline: KEYLINE_W });
+    return `<svg class="sticker" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+      <rect width="100" height="100" rx="15" fill="#121316"/>
+      <svg x="14" y="14" width="72" height="72" viewBox="${viewBox}" overflow="visible">${body}</svg>
+    </svg>`;
+  }
+
   let stickSeq = 0;
   function stickSVG(design) {
-    const { viewBox, body } = logoParts(design);
+    const { viewBox, body } = logoParts(design, { keyline: KEYLINE_W });
     const u = `st${++stickSeq}`;
     return `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" aria-hidden="true">
@@ -258,7 +267,7 @@
       els.preview.setAttribute('aria-label', 'Logo preview, empty');
       return;
     }
-    els.preview.innerHTML = logoSVG(state);
+    els.preview.innerHTML = stickerSVG(state);
     const font = fontFor(state.font);
     const outline = state.outline ? `${state.outline.name} outline` : 'no outline';
     els.preview.setAttribute('aria-label', `${state.text} in ${font.name} font, ${state.fill.name} with ${outline}`);
@@ -446,19 +455,26 @@
       </button>`).join('');
   }
 
+  // Lays the pack out like the real backing sheet, sized to fit the square preview.
   function renderSheet() {
     const sheet = $('#sheet');
-    const one = logoSVG(state, { dieCut: true });
-    sheet.style.setProperty('--cols', pack.cols);
-    sheet.style.setProperty('--gap', pack.cols > 4 ? '4%' : pack.cols > 3 ? '6%' : '10%');
-    sheet.style.padding = pack.qty === 6 ? '18% 10%' : '10%';
-    sheet.innerHTML = one.repeat(pack.qty);
+    const cols = pack.cols;
+    const rows = pack.qty / cols;
+    const GAP = 0.24;
+    const PAD = 0.45;
+    const span = (n) => n + (n - 1) * GAP + PAD * 2;
+    const unit = 84 / Math.max(span(cols), span(rows));
+    sheet.style.setProperty('--cols', cols);
+    sheet.style.setProperty('--u', `${unit.toFixed(3)}cqmin`);
+    sheet.style.setProperty('--gap', `${(unit * GAP).toFixed(3)}cqmin`);
+    sheet.style.setProperty('--pad', `${(unit * PAD).toFixed(3)}cqmin`);
+    sheet.innerHTML = stickerSVG(state).repeat(pack.qty);
   }
 
   function renderOrder() {
     renderQty();
     renderSheet();
-    $('#single').innerHTML = logoSVG(state, { dieCut: true });
+    $('#single').innerHTML = stickerSVG(state);
     $('#onStick').innerHTML = stickSVG(state);
   }
 
@@ -529,7 +545,7 @@
       const design = designOf(item);
       return `
         <li>
-          <div class="cart-thumb">${logoSVG(design)}</div>
+          <div class="cart-thumb">${stickerSVG(design)}</div>
           <div class="cart-meta">
             <strong>“${item.text}” · ${fontFor(item.font).name}</strong>
             <span>${describe(design)}</span>
@@ -613,36 +629,16 @@
 
   // ---------- Home ----------
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let heroTimer = null;
-  let heroIndex = 0;
-
-  function renderHero() {
-    const d = designOf(SAMPLES[heroIndex]);
-    $('#heroStick').innerHTML = stickSVG(d);
-    $('#heroCaption').textContent = `“${d.text}” · ${fontFor(d.font).name} · ${describe(d)}`;
-  }
-
-  function startHero() {
-    clearInterval(heroTimer);
-    if (reduceMotion.matches) return;
-    heroTimer = setInterval(() => {
-      heroIndex = (heroIndex + 1) % 6;
-      renderHero();
-    }, 3200);
-  }
-
   function renderHome() {
-    renderHero();
     const sample = { text: '19', font: 'dangle', fill: '#00205B', outline: '#FFFFFF' };
     $('#howText').innerHTML = logoSVG(designOf({ ...sample, fill: '#2A2D33', outline: null }));
-    $('#howColour').innerHTML = logoSVG(designOf(sample));
+    $('#howColour').innerHTML = stickerSVG(designOf(sample));
     $('#howStick').innerHTML = stickSVG(designOf(sample));
 
-    const tileColours = ['#AF1E2D', '#00205B', '#006847', '#F74902', '#192168', '#6F263D', '#041E42', '#CE1126'];
+    const tileColours = ['#AF1E2D', '#99D9D9', '#FFB81C', '#F74902', '#FFFFFF', '#B4975A', '#0038A8', '#CE1126'];
     $('#fontTiles').innerHTML = FONTS.map((f, i) => `
       <button class="font-tile" type="button" data-tile-font="${f.id}">
-        <span class="tile-art">${logoSVG(designOf({ text: 'JR', font: f.id, fill: tileColours[i], outline: null }))}</span>
+        <span class="tile-art">${stickerSVG(designOf({ text: 'JR', font: f.id, fill: tileColours[i], outline: null }))}</span>
         <span class="tile-name" style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</span>
         <span class="tile-meaning">${f.meaning}</span>
       </button>`).join('');
@@ -684,7 +680,7 @@
       return `
         <li>
           <button class="g-card" type="button" data-sample="${i}" aria-label="Customize “${d.text}” in ${font.name}, ${describe(design)}">
-            <span class="g-art">${logoSVG(design)}</span>
+            <span class="g-art">${stickerSVG(design)}</span>
             <span class="g-meta">
               <strong>“${d.text}” · ${font.name}</strong>
               <span>${describe(design)}</span>
@@ -715,7 +711,6 @@
   // ---------- About ----------
 
   function renderAbout() {
-    $('#aboutStick').innerHTML = stickSVG(state.text ? state : designOf(SAMPLES[0]));
     $('#glossary').innerHTML = FONTS.map((f) => `
       <div>
         <dt style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</dt>
@@ -753,7 +748,7 @@
       : `<span>${item.qty} stickers</span>`;
     return `
       <li class="co-item">
-        <div class="cart-thumb">${logoSVG(design)}</div>
+        <div class="cart-thumb">${stickerSVG(design)}</div>
         <div class="cart-meta">
           <strong>“${item.text}” · ${fontFor(item.font).name}</strong>
           <span>${describe(design)}</span>
@@ -890,11 +885,9 @@
   let currentPage = null;
 
   function renderPage(id, { fresh = true } = {}) {
-    if (id !== 'home') clearInterval(heroTimer);
     switch (id) {
       case 'home':
         renderHome();
-        if (fresh) startHero();
         break;
       case 'order':
         renderOrder();
@@ -949,6 +942,7 @@
     if (drawer.open) renderCart();
   }
 
+  $('#year').textContent = new Date().getFullYear();
   update({ fonts: true, swatches: true, url: false });
   renderCart();
   returnFromStripe();

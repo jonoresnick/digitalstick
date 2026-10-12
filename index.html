@@ -51,8 +51,8 @@
           <p class="hero-note">Packs from $12.99 · 8 fonts · 20 team colours</p>
         </div>
         <div class="hero-visual">
-          <div class="hero-card" id="heroStick" role="img" aria-label="A sticker on the lower shaft of a hockey stick"></div>
-          <p class="hero-caption" id="heroCaption" aria-live="off"></p>
+          <img class="hero-card photo" src="assets/photos/sticks-jr.jpg" width="1050" height="1400"
+               alt="Two hockey sticks, each with a light blue JR sticker on the shaft above the flex print">
         </div>
       </div>
 
@@ -89,14 +89,33 @@
         </div>
       </div>
 
+      <div class="section band">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">Every design ships on a sheet</h2>
+          </div>
+          <p class="section-sub">Peel one off for each new stick and keep the rest for the season.</p>
+          <div class="photo-band">
+            <img class="photo" src="assets/photos/sheets-spread.jpg" width="1050" height="1400" loading="lazy"
+                 alt="Sticker sheets fanned out on a table, with numbers 8, 14 and 22 and initials TB and TP">
+            <img class="photo" src="assets/photos/sheet-ah.jpg" width="1050" height="1400" loading="lazy"
+                 alt="A sheet of 24 black square stickers with a purple and gold AH logo">
+            <img class="photo" src="assets/photos/sheet-strip.jpg" width="1400" height="1400" loading="lazy"
+                 alt="A long strip of black square stickers printed with several different team logos">
+          </div>
+        </div>
+      </div>
+
       <div class="section packs-section">
         <div class="container packs-inner">
-          <div>
+          <img class="packs-photo" src="assets/photos/stickers-3d.jpg" width="1200" height="900" loading="lazy"
+               alt="Four square stickers reading JR, TJ, 28 and 61, each on a black background">
+          <div class="packs-copy">
             <h2 class="section-title">Sticker packs</h2>
-            <p class="section-sub">Every pack is the same design, printed on 1” x 1” vinyl.</p>
+            <p class="section-sub">Every sticker in a pack is the same design, printed on 1” x 1” vinyl.</p>
+            <ul class="pack-list" id="packList"></ul>
+            <a class="btn primary lg" href="#design">Start designing</a>
           </div>
-          <ul class="pack-list" id="packList"></ul>
-          <a class="btn primary lg" href="#design">Start designing</a>
         </div>
       </div>
     </section>
@@ -249,7 +268,8 @@
             <p>The fonts are named after the words you hear on the bench, and every colour comes straight from an NHL team palette, down to the hex code.</p>
           </div>
           <figure class="placement">
-            <div class="placement-card" id="aboutStick"></div>
+            <img class="placement-card photo" src="assets/photos/sticks-jr-closeup.jpg" width="1050" height="1400" loading="lazy"
+                 alt="Close-up of JR stickers on two stick shafts, just above the 75 flex print">
             <figcaption>Put it on the lower shaft, just above the curve and flex print. You see it every time you look down, and it stays clear of your grip and your blade tape.</figcaption>
           </figure>
         </div>
@@ -367,13 +387,7 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <a class="brand small" href="#home">Digital Stick</a>
-      <nav class="footer-nav" aria-label="Footer">
-        <a href="#design">Design</a>
-        <a href="#explore">Explore</a>
-        <a href="#about">About</a>
-        <a href="#terms" data-terms>Terms</a>
-      </nav>
-      <p class="footer-note">Team colour names are for reference only. Not affiliated with the NHL or its teams.</p>
+      <p class="footer-copy">© <span id="year">2026</span> Digital Stick</p>
     </div>
   </footer>
 
