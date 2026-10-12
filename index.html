@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Digital Stick — Build your design</title>
+  <title>Digital Stick</title>
   <meta name="description" content="Design a two-character logo in your team's colours and put it on your hockey stick.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,12 +13,12 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="./">Digital Stick</a>
+      <a class="brand" href="#home">Digital Stick</a>
 
       <nav class="nav" id="nav" aria-label="Main">
-        <a href="#about">About</a>
-        <a href="./" aria-current="page">Design</a>
-        <a href="#explore">Explore</a>
+        <a href="#about" data-nav="about">About</a>
+        <a href="#design" data-nav="design">Design</a>
+        <a href="#explore" data-nav="explore">Explore</a>
       </nav>
 
       <div class="header-icons">
@@ -26,7 +26,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9.5h14l-1.2 9.6a2 2 0 0 1-2 1.7H8.2a2 2 0 0 1-2-1.7L5 9.5Z"/><path d="M9 9.5V7a3 3 0 0 1 6 0v2.5"/></svg>
           <span class="badge" id="cartCount" hidden>0</span>
         </button>
-        <button class="icon-btn account-btn" type="button" aria-label="Account">
+        <button class="icon-btn account-btn" id="accountBtn" type="button" aria-label="Account">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5Z"/></svg>
         </button>
         <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
@@ -37,11 +37,75 @@
   </header>
 
   <main>
-    <!-- Step 1: build the design -->
-    <section class="step" id="stepDesign" aria-labelledby="designTitle">
+    <!-- Home -->
+    <section class="page home" data-page="home" aria-labelledby="homeTitle" hidden>
+      <div class="container hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Custom stick stickers</p>
+          <h1 class="hero-title" id="homeTitle" tabindex="-1">Your numbers on your twig.</h1>
+          <p class="lede">Design a two-character logo in your team’s colours. We print it on a 1” vinyl sticker that sits on your shaft, right where you look down at it every shift.</p>
+          <div class="hero-ctas">
+            <a class="btn primary lg" href="#design">Build your design</a>
+            <a class="btn ghost lg" href="#explore">Explore designs</a>
+          </div>
+          <p class="hero-note">Packs from $12.99 · 8 fonts · 20 team colours</p>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card" id="heroStick" role="img" aria-label="A sticker on the lower shaft of a hockey stick"></div>
+          <p class="hero-caption" id="heroCaption" aria-live="off"></p>
+        </div>
+      </div>
+
+      <div class="section how">
+        <div class="container">
+          <h2 class="section-title">How it works</h2>
+          <ol class="steps-list">
+            <li>
+              <div class="step-visual" id="howText"></div>
+              <h3>Enter your numbers or initials</h3>
+              <p>Two characters. Your number, your initials, or whatever the room calls you.</p>
+            </li>
+            <li>
+              <div class="step-visual" id="howColour"></div>
+              <h3>Pick a font and your colours</h3>
+              <p>Eight fonts named for the rink, and colours matched to NHL team hex codes.</p>
+            </li>
+            <li>
+              <div class="step-visual stick-mini" id="howStick"></div>
+              <h3>Stick it above the flex</h3>
+              <p>Each pack is 1” x 1” vinyl. Put one on the lower shaft and keep spares for your next twig.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="section fonts-section">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title">Eight fonts, named for the rink</h2>
+            <a class="text-link" href="#design">Try them all</a>
+          </div>
+          <div class="font-tiles" id="fontTiles"></div>
+        </div>
+      </div>
+
+      <div class="section packs-section">
+        <div class="container packs-inner">
+          <div>
+            <h2 class="section-title">Sticker packs</h2>
+            <p class="section-sub">Every pack is the same design, printed on 1” x 1” vinyl.</p>
+          </div>
+          <ul class="pack-list" id="packList"></ul>
+          <a class="btn primary lg" href="#design">Start designing</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Design, step 1: build the design -->
+    <section class="page step" data-page="design" id="stepDesign" aria-labelledby="designTitle" hidden>
       <div class="container layout">
         <div class="preview-col">
-          <h1 class="step-title" id="designTitle">Build your design</h1>
+          <h1 class="step-title" id="designTitle" tabindex="-1">Build your design</h1>
           <div class="preview-card">
             <div class="logo-preview" id="logoPreview" role="img" aria-label="Logo preview"></div>
           </div>
@@ -103,11 +167,11 @@
       </div>
     </section>
 
-    <!-- Step 2: pick a pack and add to cart -->
-    <section class="step" id="stepOrder" aria-labelledby="orderTitle" hidden>
+    <!-- Design, step 2: pick a pack and add to cart -->
+    <section class="page step" data-page="order" id="stepOrder" aria-labelledby="orderTitle" hidden>
       <div class="container layout">
         <div class="preview-col">
-          <h1 class="step-title" id="orderTitle">Your design</h1>
+          <h1 class="step-title" id="orderTitle" tabindex="-1">Your design</h1>
           <div class="preview-card carousel-card">
             <div class="carousel" id="carousel" aria-roledescription="carousel" aria-label="Design previews">
               <div class="slide" role="group" aria-roledescription="slide" aria-label="Sticker pack">
@@ -156,7 +220,163 @@
         </form>
       </div>
     </section>
+
+    <!-- Explore -->
+    <section class="page explore" data-page="explore" aria-labelledby="exploreTitle" hidden>
+      <div class="container">
+        <div class="page-head">
+          <h1 class="page-title" id="exploreTitle" tabindex="-1">Explore</h1>
+          <p class="page-sub">Starter designs to riff on. Pick one, then change anything you want.</p>
+        </div>
+        <div class="chips" id="exploreChips" role="radiogroup" aria-label="Filter by font"></div>
+        <ul class="gallery" id="gallery"></ul>
+        <p class="gallery-empty" id="galleryEmpty" hidden>No designs in this font yet. <a href="#design">Make the first one.</a></p>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="page about" data-page="about" aria-labelledby="aboutTitle" hidden>
+      <div class="container">
+        <div class="page-head">
+          <h1 class="page-title" id="aboutTitle" tabindex="-1">About Digital Stick</h1>
+          <p class="page-sub">Every player has a number. We put yours on your stick.</p>
+        </div>
+
+        <div class="about-grid">
+          <div class="prose">
+            <p>Digital Stick started with a simple itch: sticks all look the same on the rack, and a strip of tape with your number in marker doesn’t last a week. We wanted something that looked like it came from the factory and still felt like yours.</p>
+            <p>So we built a customizer. You choose two characters, a font, a fill colour and an outline. We print it on 1” vinyl and ship it in a pack, so you have one for every new twig this season.</p>
+            <p>The fonts are named after the words you hear on the bench, and every colour comes straight from an NHL team palette, down to the hex code.</p>
+          </div>
+          <figure class="placement">
+            <div class="placement-card" id="aboutStick"></div>
+            <figcaption>Put it on the lower shaft, just above the curve and flex print. You see it every time you look down, and it stays clear of your grip and your blade tape.</figcaption>
+          </figure>
+        </div>
+
+        <div class="about-section">
+          <h2 class="section-title">Applying your sticker</h2>
+          <ol class="apply-list">
+            <li><strong>Clean the spot.</strong> Wipe the shaft with rubbing alcohol and let it dry.</li>
+            <li><strong>Peel and place.</strong> Line it up square with the shaft before you press down.</li>
+            <li><strong>Press it flat.</strong> Work from the centre out to push out any air.</li>
+            <li><strong>Let it set.</strong> Give it a few hours before your next skate.</li>
+          </ol>
+        </div>
+
+        <div class="about-section">
+          <h2 class="section-title">The glossary</h2>
+          <dl class="glossary" id="glossary"></dl>
+        </div>
+
+        <div class="about-section">
+          <h2 class="section-title">The colours</h2>
+          <p class="section-sub">Each colour is named for the team it comes from. Digital Stick isn’t affiliated with the NHL or any of its teams.</p>
+          <ul class="palette-list" id="paletteList"></ul>
+        </div>
+
+        <div class="about-section">
+          <h2 class="section-title">Questions</h2>
+          <div class="faq">
+            <details>
+              <summary>How big are the stickers?</summary>
+              <p>Every sticker is 1” x 1”, which fits across the shaft of a senior or intermediate stick.</p>
+            </details>
+            <details>
+              <summary>Can I use one character?</summary>
+              <p>Yes. Enter a single number or letter and the design centres it for you.</p>
+            </details>
+            <details>
+              <summary>Can I use a colour that isn’t listed?</summary>
+              <p>Tap the plus button at the start of either colour row to pick any colour you like.</p>
+            </details>
+            <details>
+              <summary>Can I order more than one design?</summary>
+              <p>Yes. Add a design to your bag, then go back and build another. Every design ships together.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checkout -->
+    <section class="page checkout-page" data-page="checkout" aria-labelledby="checkoutTitle" hidden>
+      <div class="container">
+        <div class="page-head">
+          <h1 class="page-title" id="checkoutTitle" tabindex="-1">Checkout</h1>
+        </div>
+
+        <div class="checkout-empty" id="checkoutEmpty" hidden>
+          <p>Your bag is empty.</p>
+          <a class="btn primary lg" href="#design">Build your design</a>
+        </div>
+
+        <form class="checkout-grid" id="checkoutForm" novalidate>
+          <div class="checkout-main">
+            <section class="co-block" aria-labelledby="coBagTitle">
+              <h2 class="co-title" id="coBagTitle">Your bag</h2>
+              <ul class="co-items" id="coItems"></ul>
+              <a class="text-link" href="#design">+ Add another design</a>
+            </section>
+
+            <section class="co-block" aria-labelledby="coShipTitle">
+              <h2 class="co-title" id="coShipTitle">Shipping</h2>
+              <div class="ship-options" id="shipOptions" role="radiogroup" aria-labelledby="coShipTitle"></div>
+              <p class="co-note">You’ll enter your shipping address on the next step.</p>
+            </section>
+          </div>
+
+          <aside class="summary" aria-labelledby="summaryTitle">
+            <h2 class="co-title" id="summaryTitle">Order summary</h2>
+            <dl class="summary-rows">
+              <div><dt>Subtotal</dt><dd id="sumSubtotal">$0.00</dd></div>
+              <div><dt>Shipping</dt><dd id="sumShipping">$0.00</dd></div>
+              <div><dt>Taxes</dt><dd class="muted">Calculated at payment</dd></div>
+              <div class="total"><dt>Total</dt><dd id="sumTotal">$0.00</dd></div>
+            </dl>
+            <button class="btn primary block lg" id="payBtn" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+              <span>Continue to payment</span>
+            </button>
+            <p class="error" id="payError" role="alert" hidden></p>
+            <p class="secure-note">Payment is handled by Stripe. You can pay by card, Apple Pay or Google Pay, and your card details never touch this site.</p>
+            <p class="demo-note" id="demoNote">Demo mode: payments aren’t connected yet, so nothing will be charged.</p>
+          </aside>
+        </form>
+      </div>
+    </section>
+
+    <!-- Thanks -->
+    <section class="page thanks" data-page="thanks" aria-labelledby="thanksTitle" hidden>
+      <div class="container thanks-inner">
+        <div class="thanks-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9"/></svg>
+        </div>
+        <h1 class="page-title" id="thanksTitle" tabindex="-1">Your order’s in</h1>
+        <p class="demo-banner" id="thanksDemo" hidden>This was a demo order. Payments aren’t connected yet, so nothing was charged.</p>
+        <p class="page-sub" id="thanksSub">We’ll print your stickers and email you when they ship.</p>
+        <ul class="co-items thanks-items" id="thanksItems"></ul>
+        <div class="hero-ctas center">
+          <a class="btn primary lg" href="#design">Design another</a>
+          <a class="btn ghost lg" href="#home">Back to home</a>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand small" href="#home">Digital Stick</a>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#design">Design</a>
+        <a href="#explore">Explore</a>
+        <a href="#about">About</a>
+        <a href="#terms" data-terms>Terms</a>
+      </nav>
+      <p class="footer-note">Team colour names are for reference only. Not affiliated with the NHL or its teams.</p>
+    </div>
+  </footer>
+
 
   <!-- Cart drawer -->
   <dialog class="drawer" id="cartDrawer" aria-labelledby="cartTitle">

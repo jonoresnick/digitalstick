@@ -3,14 +3,14 @@
 
   // Each font is named after a hockey term.
   const FONTS = [
-    { id: 'beauty', name: 'Beauty', family: 'Bebas Neue',     weight: 400 },
-    { id: 'celly',  name: 'Celly',  family: 'Yellowtail',     weight: 400 },
-    { id: 'chirp',  name: 'Chirp',  family: 'Alfa Slab One',  weight: 400 },
-    { id: 'dangle', name: 'Dangle', family: 'Graduate',       weight: 400 },
-    { id: 'flow',   name: 'Flow',   family: 'Kaushan Script', weight: 400 },
-    { id: 'snipe',  name: 'Snipe',  family: 'Abril Fatface',  weight: 400 },
-    { id: 'twig',   name: 'Twig',   family: 'Fredoka',        weight: 700 },
-    { id: 'wheel',  name: 'Wheel',  family: 'Russo One',      weight: 400 },
+    { id: 'beauty', name: 'Beauty', family: 'Bebas Neue',     weight: 400, meaning: 'The teammate everyone loves having in the room.' },
+    { id: 'celly',  name: 'Celly',  family: 'Yellowtail',     weight: 400, meaning: 'The celebration after you score.' },
+    { id: 'chirp',  name: 'Chirp',  family: 'Alfa Slab One',  weight: 400, meaning: 'Trash talk, usually from the bench.' },
+    { id: 'dangle', name: 'Dangle', family: 'Graduate',       weight: 400, meaning: 'A slick deke around a defender.' },
+    { id: 'flow',   name: 'Flow',   family: 'Kaushan Script', weight: 400, meaning: 'The hair sticking out the back of your helmet.' },
+    { id: 'snipe',  name: 'Snipe',  family: 'Abril Fatface',  weight: 400, meaning: 'A shot picked perfectly into the corner.' },
+    { id: 'twig',   name: 'Twig',   family: 'Fredoka',        weight: 700, meaning: 'Your stick.' },
+    { id: 'wheel',  name: 'Wheel',  family: 'Russo One',      weight: 400, meaning: 'To skate fast. “That kid can wheel.”' },
   ];
 
   // Colours pulled from NHL team palettes.
@@ -44,9 +44,43 @@
     { qty: 48, price: 89.99, cols: 6 },
   ];
 
+  // Starter designs for the Explore page and the homepage.
+  const SAMPLES = [
+    { text: 'CF', font: 'twig',   fill: '#AF1E2D', outline: '#FFFFFF' },
+    { text: 'JR', font: 'celly',  fill: '#AF1E2D', outline: '#192168' },
+    { text: '19', font: 'dangle', fill: '#00205B', outline: '#FFFFFF' },
+    { text: '87', font: 'wheel',  fill: '#FFB81C', outline: '#000000' },
+    { text: 'MB', font: 'flow',   fill: '#F74902', outline: '#000000' },
+    { text: '97', font: 'beauty', fill: '#041E42', outline: '#F74902' },
+    { text: 'AK', font: 'snipe',  fill: '#006847', outline: '#000000' },
+    { text: '8',  font: 'chirp',  fill: '#CE1126', outline: '#FFFFFF' },
+    { text: 'SK', font: 'celly',  fill: '#99D9D9', outline: '#041E42' },
+    { text: '29', font: 'dangle', fill: '#6F263D', outline: '#236192' },
+    { text: '14', font: 'twig',   fill: '#B4975A', outline: '#000000' },
+    { text: 'LA', font: 'wheel',  fill: '#A2AAAD', outline: '#000000' },
+    { text: 'NY', font: 'flow',   fill: '#0038A8', outline: '#CE1126' },
+    { text: '71', font: 'beauty', fill: '#FFB81C', outline: '#000000' },
+    { text: 'SJ', font: 'chirp',  fill: '#006D75', outline: '#000000' },
+    { text: 'DD', font: 'snipe',  fill: '#FFFFFF', outline: '#CE1126' },
+    { text: '00', font: 'celly',  fill: '#000000', outline: null },
+    { text: 'TB', font: 'dangle', fill: '#F47A38', outline: '#000000' },
+  ];
+
+  // Must match SHIPPING in netlify/functions/checkout.mjs.
+  const SHIPPING = [
+    { id: 'standard', name: 'Standard mail', price: 2.99, eta: '5–10 business days' },
+    { id: 'tracked',  name: 'Tracked',       price: 9.99, eta: '2–5 business days' },
+  ];
+
+  // Leave empty to run checkout in demo mode. Set to '/api/checkout' once the
+  // Stripe function is deployed (see README).
+  const CHECKOUT_URL = '';
+  const CURRENCY = 'CAD';
+
   const OUTLINE_W = 7;   // in font-size-100 units
   const DIECUT_W = 30;   // white sticker border, drawn behind the outline
   const CART_KEY = 'digitalstick.cart';
+  const ORDER_KEY = 'digitalstick.lastOrder';
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -151,35 +185,56 @@
     return `<svg${cls} xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" aria-hidden="true">${body}</svg>`;
   }
 
+  // Mirrors where players put it: a 1" square sticker on the lower shaft, above the flex/curve print.
+  let stickSeq = 0;
   function stickSVG(design) {
-    const { viewBox, body } = logoParts(design, { dieCut: true });
-    const tape = Array.from({ length: 9 }, (_, i) =>
-      `<line x1="${-60 + i * 16}" y1="150" x2="${-40 + i * 16}" y2="250" stroke="#d9dce1" stroke-width="2"/>`).join('');
+    const { viewBox, body } = logoParts(design);
+    const u = `st${++stickSeq}`;
     return `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" aria-hidden="true">
         <defs>
-          <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#3a3f47"/>
-            <stop offset=".18" stop-color="#23272d"/>
-            <stop offset=".75" stop-color="#15181c"/>
-            <stop offset="1" stop-color="#0b0d10"/>
+          <linearGradient id="${u}stickLower" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#45474d"/>
+            <stop offset=".1" stop-color="#141518"/>
+            <stop offset=".55" stop-color="#0b0c0e"/>
+            <stop offset=".88" stop-color="#1b1c20"/>
+            <stop offset="1" stop-color="#4b4d53"/>
           </linearGradient>
-          <pattern id="weave" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect width="4" height="8" fill="#fff" opacity=".035"/>
+          <linearGradient id="${u}stickUpper" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#3f3a35"/>
+            <stop offset=".3" stop-color="#8e867c"/>
+            <stop offset=".6" stop-color="#6c655d"/>
+            <stop offset="1" stop-color="#36322e"/>
+          </linearGradient>
+          <pattern id="${u}stickDots" width="7" height="7" patternUnits="userSpaceOnUse">
+            <circle cx="3.5" cy="3.5" r="1" fill="#fff" opacity=".18"/>
           </pattern>
-          <clipPath id="tape"><rect x="-80" y="150" width="150" height="100" rx="10"/></clipPath>
-          <filter id="lift" x="-10%" y="-20%" width="120%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".35"/>
+          <linearGradient id="${u}stickerGloss" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+            <stop offset=".35" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="${u}stickShadow" x="-30%" y="-10%" width="160%" height="120%">
+            <feDropShadow dx="10" dy="6" stdDeviation="9" flood-opacity=".22"/>
           </filter>
         </defs>
-        <g transform="rotate(-24 200 200)">
-          <rect x="-80" y="150" width="560" height="100" rx="12" fill="url(#shaft)"/>
-          <rect x="-80" y="150" width="560" height="100" rx="12" fill="url(#weave)"/>
-          <rect x="-80" y="156" width="560" height="6" fill="#fff" opacity=".08"/>
-          <rect x="-80" y="150" width="150" height="100" rx="10" fill="#f4f5f7"/>
-          <g clip-path="url(#tape)">${tape}</g>
-          <text x="306" y="204" font-family="Nunito, sans-serif" font-weight="800" font-size="11" letter-spacing="2.5" fill="#8a8f98">DIGITAL STICK</text>
-          <svg x="92" y="160" width="200" height="80" viewBox="${viewBox}" filter="url(#lift)" overflow="visible">${body}</svg>
+        <g transform="translate(200 200) rotate(-9)">
+          <g filter="url(#${u}stickShadow)">
+            <rect x="-62" y="-340" width="124" height="680" fill="url(#${u}stickLower)"/>
+            <path d="M-62 -340H62V-92L38 -126H-38L-62 -92Z" fill="url(#${u}stickUpper)"/>
+            <path d="M-62 -340H62V-250H-62Z" fill="url(#${u}stickDots)"/>
+            <path d="M-62 -168L0 -206L62 -168" fill="none" stroke="#d3202f" stroke-width="5"/>
+            <path d="M-62 -92L-38 -126H38L62 -92" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.5"/>
+            <rect x="-62" y="-340" width="4" height="680" fill="#e4e5e8" opacity=".75"/>
+            <rect x="58" y="-340" width="4" height="680" fill="#e4e5e8" opacity=".55"/>
+            <rect x="-44" y="-340" width="9" height="680" fill="#fff" opacity=".06"/>
+          </g>
+          <g transform="translate(0 -24)">
+            <rect x="-50" y="-50" width="100" height="100" rx="12" fill="#0a0a0c" fill-opacity=".55" stroke="#fff" stroke-opacity=".3" stroke-width="1.2"/>
+            <svg x="-40" y="-40" width="80" height="80" viewBox="${viewBox}" overflow="visible">${body}</svg>
+            <rect x="-50" y="-50" width="100" height="100" rx="12" fill="url(#${u}stickerGloss)"/>
+          </g>
+          <text transform="translate(0 52) rotate(90)" x="0" y="0" dominant-baseline="central"
+                font-family="'Russo One', sans-serif" font-size="34" letter-spacing="3" fill="#f1f2f4">P28 / 70 FLEX</text>
         </g>
       </svg>`;
   }
@@ -263,13 +318,31 @@
     els.nextBtn.disabled = !state.text;
   }
 
-  function update({ swatches = false, fonts = false } = {}) {
+  function update({ swatches = false, fonts = false, url = true } = {}) {
     if (fonts) renderFonts();
     if (swatches) renderColours();
     renderPreview();
     renderSummary();
-    writeURL();
+    if (url) writeURL();
   }
+
+  function loadDesign(d) {
+    state.text = d.text;
+    state.font = d.font;
+    state.fill = colourFor(d.fill);
+    state.outline = d.outline ? colourFor(d.outline) : null;
+    els.textInput.value = state.text;
+    update({ fonts: true, swatches: true });
+    ensureFont().then(() => update());
+  }
+
+  const designOf = (d) => ({
+    text: d.text,
+    font: d.font,
+    fill: colourFor(d.fill),
+    outline: d.outline ? colourFor(d.outline) : null,
+  });
+  const describe = (d) => `${d.fill.name} / ${d.outline ? d.outline.name : 'No outline'}`;
 
   els.textInput.value = state.text;
   els.textInput.addEventListener('input', () => {
@@ -362,8 +435,6 @@
 
   // ---------- Step 2: order ----------
 
-  const stepDesign = $('#stepDesign');
-  const stepOrder = $('#stepOrder');
   const carousel = $('#carousel');
   const dots = $$('.dot');
 
@@ -399,33 +470,15 @@
     renderSheet();
   });
 
-  function showStep(order, { push = true } = {}) {
-    stepDesign.hidden = order;
-    stepOrder.hidden = !order;
-    if (order) {
-      renderOrder();
-      carousel.scrollLeft = 0;
-      setDot(0);
-    }
-    if (push) {
-      try { history.pushState({ order }, '', order ? `${location.search}#order` : location.search || location.pathname); } catch (_) {}
-    }
-    window.scrollTo({ top: 0 });
-    $(order ? '#orderTitle' : '#designTitle').focus({ preventScroll: true });
-  }
-  $('#orderTitle').tabIndex = -1;
-  $('#designTitle').tabIndex = -1;
-
   $('#designForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!state.text) {
       els.textInput.focus();
       return;
     }
-    showStep(true);
+    location.hash = 'order';
   });
-  $('#backBtn').addEventListener('click', () => showStep(false));
-  window.addEventListener('popstate', () => showStep(location.hash === '#order' && !!state.text, { push: false }));
+  $('#backBtn').addEventListener('click', () => { location.hash = 'design'; });
 
   function setDot(i) {
     dots.forEach((d, j) => d.setAttribute('aria-selected', i === j));
@@ -473,28 +526,25 @@
     $('#cartBtn').setAttribute('aria-label', count ? `Bag, ${count} item${count > 1 ? 's' : ''}` : 'Bag');
 
     $('#cartItems').innerHTML = cart.map((item, i) => {
-      const design = {
-        text: item.text,
-        font: item.font,
-        fill: colourFor(item.fill),
-        outline: item.outline ? colourFor(item.outline) : null,
-      };
-      const outline = design.outline ? design.outline.name : 'No outline';
+      const design = designOf(item);
       return `
         <li>
           <div class="cart-thumb">${logoSVG(design)}</div>
           <div class="cart-meta">
             <strong>“${item.text}” · ${fontFor(item.font).name}</strong>
-            <span>${design.fill.name} / ${outline}</span>
+            <span>${describe(design)}</span>
             <span>${item.qty} stickers</span>
           </div>
           <div class="cart-side">${money(item.price)}<button type="button" data-remove="${i}">Remove</button></div>
         </li>`;
     }).join('');
     $('#cartEmpty').hidden = count > 0;
-    $('#subtotal').textContent = money(cart.reduce((sum, item) => sum + item.price, 0));
+    $('#subtotal').textContent = money(subtotal());
     $('#checkoutBtn').disabled = count === 0;
+    if (currentPage === 'checkout') renderCheckout();
   }
+
+  const subtotal = () => cart.reduce((sum, item) => sum + item.price, 0);
 
   $('#cartItems').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-remove]');
@@ -507,7 +557,10 @@
     renderCart();
     drawer.showModal();
   });
-  $('#checkoutBtn').addEventListener('click', () => toast('Checkout is closed for the off-season.'));
+  $('#checkoutBtn').addEventListener('click', () => {
+    drawer.close();
+    location.hash = 'checkout';
+  });
 
   $$('dialog').forEach((dlg) => {
     dlg.addEventListener('click', (e) => {
@@ -552,12 +605,335 @@
     const open = nav.classList.toggle('open');
     menuBtn.setAttribute('aria-expanded', open);
   });
-  $$('a[href="#about"], a[href="#explore"]', nav).forEach((a) => a.addEventListener('click', (e) => {
+  $('#accountBtn').addEventListener('click', () => toast('Accounts are coming soon. Your bag is saved on this device.'));
+  $$('[data-terms]').forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
+    termsDialog.showModal();
+  }));
+
+  // ---------- Home ----------
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let heroTimer = null;
+  let heroIndex = 0;
+
+  function renderHero() {
+    const d = designOf(SAMPLES[heroIndex]);
+    $('#heroStick').innerHTML = stickSVG(d);
+    $('#heroCaption').textContent = `“${d.text}” · ${fontFor(d.font).name} · ${describe(d)}`;
+  }
+
+  function startHero() {
+    clearInterval(heroTimer);
+    if (reduceMotion.matches) return;
+    heroTimer = setInterval(() => {
+      heroIndex = (heroIndex + 1) % 6;
+      renderHero();
+    }, 3200);
+  }
+
+  function renderHome() {
+    renderHero();
+    const sample = { text: '19', font: 'dangle', fill: '#00205B', outline: '#FFFFFF' };
+    $('#howText').innerHTML = logoSVG(designOf({ ...sample, fill: '#2A2D33', outline: null }));
+    $('#howColour').innerHTML = logoSVG(designOf(sample));
+    $('#howStick').innerHTML = stickSVG(designOf(sample));
+
+    const tileColours = ['#AF1E2D', '#00205B', '#006847', '#F74902', '#192168', '#6F263D', '#041E42', '#CE1126'];
+    $('#fontTiles').innerHTML = FONTS.map((f, i) => `
+      <button class="font-tile" type="button" data-tile-font="${f.id}">
+        <span class="tile-art">${logoSVG(designOf({ text: 'JR', font: f.id, fill: tileColours[i], outline: null }))}</span>
+        <span class="tile-name" style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</span>
+        <span class="tile-meaning">${f.meaning}</span>
+      </button>`).join('');
+
+    $('#packList').innerHTML = PACKS.map((p) => `
+      <li><span class="pack-qty">${p.qty}</span><span class="pack-label">stickers</span><span class="pack-price">${money(p.price)}</span></li>`).join('');
+  }
+
+  $('#fontTiles').addEventListener('click', (e) => {
+    const tile = e.target.closest('[data-tile-font]');
+    if (!tile) return;
+    loadDesign({ ...currentDesign(), font: tile.dataset.tileFont });
+    location.hash = 'design';
+  });
+
+  function currentDesign() {
+    return {
+      text: state.text || 'JR',
+      font: state.font,
+      fill: state.fill.hex,
+      outline: state.outline ? state.outline.hex : null,
+    };
+  }
+
+  // ---------- Explore ----------
+
+  let exploreFilter = 'all';
+
+  function renderExplore() {
+    const chips = [{ id: 'all', name: 'All' }, ...FONTS];
+    $('#exploreChips').innerHTML = chips.map((c) => `
+      <button class="chip" type="button" role="radio" data-filter="${c.id}" aria-checked="${c.id === exploreFilter}"
+              ${c.family ? `style="font-family:'${c.family}',sans-serif;font-weight:${c.weight}"` : ''}>${c.name}</button>`).join('');
+
+    const list = SAMPLES.map((d, i) => ({ d, i })).filter(({ d }) => exploreFilter === 'all' || d.font === exploreFilter);
+    $('#gallery').innerHTML = list.map(({ d, i }) => {
+      const design = designOf(d);
+      const font = fontFor(d.font);
+      return `
+        <li>
+          <button class="g-card" type="button" data-sample="${i}" aria-label="Customize “${d.text}” in ${font.name}, ${describe(design)}">
+            <span class="g-art">${logoSVG(design)}</span>
+            <span class="g-meta">
+              <strong>“${d.text}” · ${font.name}</strong>
+              <span>${describe(design)}</span>
+            </span>
+            <span class="g-cta">Customize
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+        </li>`;
+    }).join('');
+    $('#galleryEmpty').hidden = list.length > 0;
+  }
+
+  $('#exploreChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-filter]');
+    if (!chip) return;
+    exploreFilter = chip.dataset.filter;
+    renderExplore();
+    $(`[data-filter="${exploreFilter}"]`).focus();
+  });
+  $('#gallery').addEventListener('click', (e) => {
+    const card = e.target.closest('[data-sample]');
+    if (!card) return;
+    loadDesign(SAMPLES[+card.dataset.sample]);
+    location.hash = 'design';
+  });
+
+  // ---------- About ----------
+
+  function renderAbout() {
+    $('#aboutStick').innerHTML = stickSVG(state.text ? state : designOf(SAMPLES[0]));
+    $('#glossary').innerHTML = FONTS.map((f) => `
+      <div>
+        <dt style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</dt>
+        <dd>${f.meaning}</dd>
+      </div>`).join('');
+    $('#paletteList').innerHTML = COLOURS.map((c) => `
+      <li>
+        <span class="pal-chip${isLight(c.hex) ? ' light' : ''}" style="--c:${c.hex}"></span>
+        <span class="pal-name">${c.name}</span>
+        <span class="pal-hex">${c.hex}</span>
+      </li>`).join('');
+  }
+
+  // ---------- Checkout ----------
+
+  let shipping = SHIPPING[0];
+  let lastOrder = loadLastOrder();
+
+  function loadLastOrder() {
+    try { return JSON.parse(localStorage.getItem(ORDER_KEY)); } catch (_) { return null; }
+  }
+  function saveLastOrder() {
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(lastOrder)); } catch (_) {}
+  }
+
+  const withCurrency = (n) => `${money(n)} ${CURRENCY}`;
+
+  function itemRow(item, i, { editable }) {
+    const design = designOf(item);
+    const packPicker = editable
+      ? `<label class="pack-select"><span class="sr-only">Pack size for “${item.text}”</span>
+           <select id="pack-${i}" data-pack-item="${i}">
+             ${PACKS.map((p) => `<option value="${p.qty}"${p.qty === item.qty ? ' selected' : ''}>${p.qty} stickers · ${money(p.price)}</option>`).join('')}
+           </select></label>`
+      : `<span>${item.qty} stickers</span>`;
+    return `
+      <li class="co-item">
+        <div class="cart-thumb">${logoSVG(design)}</div>
+        <div class="cart-meta">
+          <strong>“${item.text}” · ${fontFor(item.font).name}</strong>
+          <span>${describe(design)}</span>
+          ${packPicker}
+        </div>
+        <div class="cart-side">${money(item.price)}${editable ? `<button type="button" data-co-remove="${i}">Remove</button>` : ''}</div>
+      </li>`;
+  }
+
+  function renderCheckout() {
+    const empty = cart.length === 0;
+    $('#checkoutEmpty').hidden = !empty;
+    $('#checkoutForm').hidden = empty;
+    if (empty) return;
+
+    $('#coItems').innerHTML = cart.map((item, i) => itemRow(item, i, { editable: true })).join('');
+    $('#shipOptions').innerHTML = SHIPPING.map((o) => `
+      <button class="ship-opt" type="button" role="radio" data-ship="${o.id}" aria-checked="${o === shipping}">
+        <span class="ship-radio" aria-hidden="true"></span>
+        <span class="ship-text"><strong>${o.name}</strong><span>${o.eta}</span></span>
+        <span class="ship-price">${money(o.price)}</span>
+      </button>`).join('');
+
+    const sub = subtotal();
+    $('#sumSubtotal').textContent = money(sub);
+    $('#sumShipping').textContent = money(shipping.price);
+    $('#sumTotal').textContent = withCurrency(sub + shipping.price);
+    $('#demoNote').hidden = !!CHECKOUT_URL;
+  }
+
+  $('#coItems').addEventListener('change', (e) => {
+    const sel = e.target.closest('[data-pack-item]');
+    if (!sel) return;
+    const item = cart[+sel.dataset.packItem];
+    const p = PACKS.find((x) => x.qty === +sel.value);
+    item.qty = p.qty;
+    item.price = p.price;
+    saveCart();
+    renderCart();
+    $(`#pack-${sel.dataset.packItem}`)?.focus();
+  });
+  $('#coItems').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-co-remove]');
+    if (!btn) return;
+    cart.splice(+btn.dataset.coRemove, 1);
+    saveCart();
+    renderCart();
+  });
+  $('#shipOptions').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-ship]');
+    if (!btn) return;
+    shipping = SHIPPING.find((o) => o.id === btn.dataset.ship);
+    renderCheckout();
+    $(`[data-ship="${shipping.id}"]`).focus();
+  });
+
+  $('#checkoutForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!cart.length) return;
+    const payBtn = $('#payBtn');
+    const payError = $('#payError');
+    payError.hidden = true;
+
+    lastOrder = {
+      items: cart.map((item) => ({ ...item })),
+      shipping: shipping.id,
+      total: subtotal() + shipping.price,
+      demo: !CHECKOUT_URL,
+    };
+    saveLastOrder();
+
+    if (!CHECKOUT_URL) {
+      completeOrder();
+      return;
+    }
+
+    payBtn.disabled = true;
+    $('span', payBtn).textContent = 'Opening secure checkout…';
+    try {
+      const res = await fetch(CHECKOUT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(({ text, font, fill, outline, qty }) => ({ text, font, fill, outline, qty })),
+          shipping: shipping.id,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout is unavailable right now.');
+      location.href = data.url;
+    } catch (err) {
+      payError.textContent = `${err.message} Your bag is saved, so try again in a minute.`;
+      payError.hidden = false;
+      payBtn.disabled = false;
+      $('span', payBtn).textContent = 'Continue to payment';
+    }
+  });
+
+  function completeOrder() {
+    cart = [];
+    saveCart();
+    renderCart();
+    location.hash = 'thanks';
+  }
+
+  // Stripe sends buyers back to ?paid=<session id>#thanks after a successful payment.
+  function returnFromStripe() {
+    const params = new URLSearchParams(location.search);
+    if (!params.has('paid')) return;
+    if (lastOrder) lastOrder.demo = false;
+    saveLastOrder();
+    cart = [];
+    saveCart();
+    renderCart();
+    params.delete('paid');
+    const qs = params.toString();
+    try { history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}#thanks`); } catch (_) { location.hash = 'thanks'; }
+  }
+
+  function renderThanks() {
+    const order = lastOrder;
+    $('#thanksDemo').hidden = !(order && order.demo);
+    $('#thanksItems').innerHTML = order ? order.items.map((item, i) => itemRow(item, i, { editable: false })).join('') : '';
+    const ship = order && SHIPPING.find((o) => o.id === order.shipping);
+    $('#thanksSub').textContent = ship
+      ? `We’ll print your stickers and send them by ${ship.name.toLowerCase()} (${ship.eta}). Total ${withCurrency(order.total)}.`
+      : 'We’ll print your stickers and email you when they ship.';
+  }
+
+  // ---------- Router ----------
+
+  const PAGES = $$('[data-page]');
+  const TITLES = { design: 'Design', order: 'Your design', explore: 'Explore', about: 'About', checkout: 'Checkout', thanks: 'Thanks' };
+  let currentPage = null;
+
+  function renderPage(id, { fresh = true } = {}) {
+    if (id !== 'home') clearInterval(heroTimer);
+    switch (id) {
+      case 'home':
+        renderHome();
+        if (fresh) startHero();
+        break;
+      case 'order':
+        renderOrder();
+        if (fresh) {
+          carousel.scrollLeft = 0;
+          setDot(0);
+        }
+        break;
+      case 'explore': renderExplore(); break;
+      case 'about': renderAbout(); break;
+      case 'checkout': renderCheckout(); break;
+      case 'thanks': renderThanks(); break;
+      default: break;
+    }
+  }
+
+  function go() {
+    let id = location.hash.slice(1) || 'home';
+    if (!PAGES.some((p) => p.dataset.page === id)) id = 'home';
+    if (id === 'order' && !state.text) id = 'design';
+
+    PAGES.forEach((p) => { p.hidden = p.dataset.page !== id; });
+    const navId = id === 'order' ? 'design' : id;
+    $$('[data-nav]').forEach((a) => {
+      if (a.dataset.nav === navId) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
     nav.classList.remove('open');
     menuBtn.setAttribute('aria-expanded', 'false');
-    toast(`${a.textContent} is coming soon`);
-  }));
+    document.title = TITLES[id] ? `${TITLES[id]} · Digital Stick` : 'Digital Stick';
+
+    renderPage(id);
+    if (currentPage !== null) {
+      window.scrollTo({ top: 0 });
+      $(`[data-page="${id}"] h1`)?.focus({ preventScroll: true });
+    }
+    currentPage = id;
+  }
+  window.addEventListener('hashchange', go);
 
   // ---------- Fonts & boot ----------
 
@@ -569,13 +945,14 @@
 
   function rerender() {
     renderPreview();
-    if (!stepOrder.hidden) renderOrder();
+    renderPage(currentPage, { fresh: false });
     if (drawer.open) renderCart();
   }
 
-  update({ fonts: true, swatches: true });
+  update({ fonts: true, swatches: true, url: false });
   renderCart();
-  if (location.hash === '#order' && state.text) showStep(true, { push: false });
+  returnFromStripe();
+  go();
 
   Promise.all(FONTS.map((f) => ensureFont(f))).then(rerender);
   if (document.fonts) document.fonts.addEventListener('loadingdone', rerender);
