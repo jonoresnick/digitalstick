@@ -20,7 +20,9 @@ The site is one page with hash routes and no build step.
 
 - `index.html`: markup for every page
 - `styles.css`: desktop and mobile layouts
-- `app.js`: fonts, colours, logo rendering, cart, checkout and routing
+- `sticker.js`: fonts, colours and sticker drawing, shared by the shop and the embed
+- `app.js`: shop pages, cart, checkout and routing
+- `embed.html`, `embed.js`: the compact customizer for Notion and other pages
 - `netlify/functions/checkout.mjs`: creates the Stripe Checkout session
 - `netlify.toml`: Netlify config
 
@@ -52,3 +54,22 @@ Customers review their bag on your checkout page, then continue to Stripe's host
 - **Shipping:** `SHIPPING` in both files must match. `ALLOWED_COUNTRIES` in `checkout.mjs` controls where you ship.
 - **Taxes:** turn on Stripe Tax in the dashboard and add `automatic_tax[enabled]=true` to the session if you need to collect sales tax.
 - **About page:** the story and FAQ are starter copy. Rewrite them in your own words.
+
+## Embedding the customizer (Notion, portfolios)
+
+`embed.html` is a compact version of the customizer with no shop, bag or checkout. It's built to sit inside a Notion embed block or any other page.
+
+1. **Publish the repo with GitHub Pages.** In the GitHub repo, go to Settings → Pages. Under "Build and deployment", choose "Deploy from a branch", pick `master` and `/ (root)`, then click Save. After a minute or two the site is live at `https://jonoresnick.github.io/digitalstick/`.
+2. **Add it to Notion.** On your Notion page, type `/embed`, paste `https://jonoresnick.github.io/digitalstick/embed.html` and choose "Embed link". Drag the block's bottom edge until the whole widget shows. About 480px tall fits the two-column layout.
+
+Optional URL settings:
+
+| Parameter | Example | What it does |
+| --- | --- | --- |
+| `t` | `t=19` | Starting text (up to 2 letters or numbers) |
+| `f` | `f=dangle` | Starting font: beauty, celly, chirp, dangle, flow, snipe, twig, wheel |
+| `c` | `c=FFB81C` | Fill colour (hex, no `#`) |
+| `o` | `o=000000` or `o=none` | Outline colour |
+| `theme` | `theme=dark` | Force light or dark. By default it follows the viewer's system setting |
+
+For example: `embed.html?t=JR&f=twig&c=99D9D9&o=041E42`

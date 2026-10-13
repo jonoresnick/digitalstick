@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digital Stick Customizer</title>
+  <meta name="description" content="Design a two-character hockey stick sticker. An interactive demo of the Digital Stick customizer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Bebas+Neue&family=Yellowtail&family=Alfa+Slab+One&family=Graduate&family=Kaushan+Script&family=Abril+Fatface&family=Fredoka:wght@700&family=Russo+One&display=swap">
+  <style>
+    /* Compact two-column widget sized for a Notion embed block; stacks below 560px. */
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --panel: #f1f2f4;
+      --ink: #2a2d33;
+      --muted: #7d838c;
+      --line: #e3e6ea;
+      --field: #d4d7dc;
+      --brand: #00a9f4;
+      --ring: #2a2d33;
+      --chip-bg: #ffffff;
+      --swatch-edge: rgba(0, 0, 0, 0);
+      --font-ui: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #191a1c;
+        --panel: #232528;
+        --ink: #eceef1;
+        --muted: #9aa0a8;
+        --line: #303338;
+        --field: #3a3e44;
+        --brand: #33baf6;
+        --ring: #eceef1;
+        --chip-bg: #1f2124;
+        --swatch-edge: rgba(255, 255, 255, 0.16);
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #191a1c;
+      --panel: #232528;
+      --ink: #eceef1;
+      --muted: #9aa0a8;
+      --line: #303338;
+      --field: #3a3e44;
+      --brand: #33baf6;
+      --ring: #eceef1;
+      --chip-bg: #1f2124;
+      --swatch-edge: rgba(255, 255, 255, 0.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    button { font: inherit; color: inherit; }
+
+    .widget {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: 24px;
+      min-height: 100%;
+      padding: 16px;
+      align-items: center;
+    }
+
+    /* Preview */
+    .stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      min-height: 300px;
+      padding: 14px;
+      border-radius: 20px;
+      background: var(--panel);
+    }
+    .view {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+    }
+    .view > svg { display: block; width: 100%; height: 100%; max-height: 360px; }
+    .view.sticker-view { padding: 12% 16%; }
+    .view.sticker-view > svg { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.22)); }
+    .view.stick-view { border-radius: 12px; overflow: hidden; }
+    .empty { color: var(--muted); font-weight: 700; }
+
+    .stage-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .toggle {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: var(--bg);
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .toggle button {
+      height: 28px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      background: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .toggle button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+    .shuffle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--field);
+      border-radius: 999px;
+      background: var(--bg);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .shuffle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .shuffle:hover { border-color: var(--muted); }
+
+    /* Controls */
+    .controls { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+    .brand-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .brand { margin: 0; color: var(--brand); font-size: 20px; font-weight: 800; }
+    .brand-row a { color: var(--muted); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .brand-row a:hover { color: var(--ink); }
+
+    .group { display: flex; flex-direction: column; gap: 8px; }
+    .label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .label span { color: var(--muted); font-weight: 600; letter-spacing: 0; text-transform: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .text-input {
+      width: 100%;
+      max-width: 160px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--field);
+      border-radius: 8px;
+      background: var(--chip-bg);
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .text-input:focus { outline: 2px solid var(--brand); outline-offset: 1px; border-color: transparent; }
+
+    .fonts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+    .font-btn {
+      height: 32px;
+      padding: 0 4px;
+      border: 1px solid var(--field);
+      border-radius: 8px;
+      background: var(--chip-bg);
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .font-btn:hover { border-color: var(--muted); }
+    .font-btn[aria-checked="true"] { border: 2px solid var(--ring); }
+
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(20px, 1fr)); gap: 8px; justify-items: center; }
+    .swatch {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--c);
+      box-shadow: inset 0 0 0 1px var(--swatch-edge);
+      cursor: pointer;
+      position: relative;
+    }
+    .swatch.light { box-shadow: inset 0 0 0 1px var(--field); }
+    .swatch:hover { transform: scale(1.12); }
+    .swatch[aria-checked="true"] { box-shadow: inset 0 0 0 1px var(--swatch-edge), 0 0 0 2px var(--bg), 0 0 0 3.5px var(--ring); }
+    .swatch.none { background: var(--chip-bg); box-shadow: inset 0 0 0 1px var(--field); }
+    .swatch.none::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 70%;
+      height: 1.5px;
+      background: var(--muted);
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+    .swatch.none[aria-checked="true"] { box-shadow: inset 0 0 0 1px var(--field), 0 0 0 2px var(--bg), 0 0 0 3.5px var(--ring); }
+
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+    @media (max-width: 559px) {
+      .widget { grid-template-columns: 1fr; gap: 16px; align-items: start; }
+      .stage { min-height: 0; height: auto; }
+      .view { height: 220px; flex: none; }
+      .view.sticker-view { padding: 16px 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .swatch:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="widget">
+    <section class="stage" aria-label="Preview">
+      <div class="view sticker-view" id="view" role="img" aria-label="Sticker preview"></div>
+      <div class="stage-bar">
+        <div class="toggle" role="group" aria-label="Preview style">
+          <button type="button" id="showSticker" aria-pressed="true">Sticker</button>
+          <button type="button" id="showStick" aria-pressed="false">On a stick</button>
+        </div>
+        <button class="shuffle" type="button" id="shuffle">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          Shuffle
+        </button>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Customize">
+      <div class="brand-row">
+        <p class="brand">Digital Stick</p>
+        <a href="./" target="_blank" rel="noopener">Open the full site ↗</a>
+      </div>
+
+      <div class="group">
+        <label class="label" for="text">Numbers or initials <span>Two characters</span></label>
+        <input class="text-input" id="text" type="text" maxlength="2" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      </div>
+
+      <div class="group">
+        <p class="label" id="fontLabel">Font <span id="fontName"></span></p>
+        <div class="fonts" id="fonts" role="radiogroup" aria-labelledby="fontLabel"></div>
+      </div>
+
+      <div class="group">
+        <p class="label" id="fillLabel">Colour <span id="fillName"></span></p>
+        <div class="swatches" id="fill" role="radiogroup" aria-labelledby="fillLabel"></div>
+      </div>
+
+      <div class="group">
+        <p class="label" id="outlineLabel">Outline <span id="outlineName"></span></p>
+        <div class="swatches" id="outline" role="radiogroup" aria-labelledby="outlineLabel"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="sticker.js"></script>
+  <script src="embed.js"></script>
+</body>
+</html>
