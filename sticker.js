@@ -120,7 +120,7 @@ window.DigitalStick = (() => {
     </svg>`;
   }
 
-  // Mirrors where players put it: a 1" square sticker on the lower shaft, above the flex/curve print.
+  // A plain black shaft with the 1" square sticker on it, where players put it.
   let stickSeq = 0;
   function stickSVG(design) {
     const { viewBox, body } = logoParts(design, { keyline: KEYLINE_W });
@@ -135,15 +135,6 @@ window.DigitalStick = (() => {
             <stop offset=".88" stop-color="#1b1c20"/>
             <stop offset="1" stop-color="#4b4d53"/>
           </linearGradient>
-          <linearGradient id="${u}stickUpper" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#3f3a35"/>
-            <stop offset=".3" stop-color="#8e867c"/>
-            <stop offset=".6" stop-color="#6c655d"/>
-            <stop offset="1" stop-color="#36322e"/>
-          </linearGradient>
-          <pattern id="${u}stickDots" width="7" height="7" patternUnits="userSpaceOnUse">
-            <circle cx="3.5" cy="3.5" r="1" fill="#fff" opacity=".18"/>
-          </pattern>
           <linearGradient id="${u}stickerGloss" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
             <stop offset=".35" stop-color="#fff" stop-opacity="0"/>
@@ -155,21 +146,13 @@ window.DigitalStick = (() => {
         <g transform="translate(200 200) rotate(-9)">
           <g filter="url(#${u}stickShadow)">
             <rect x="-62" y="-340" width="124" height="680" fill="url(#${u}stickLower)"/>
-            <path d="M-62 -340H62V-92L38 -126H-38L-62 -92Z" fill="url(#${u}stickUpper)"/>
-            <path d="M-62 -340H62V-250H-62Z" fill="url(#${u}stickDots)"/>
-            <path d="M-62 -168L0 -206L62 -168" fill="none" stroke="#d3202f" stroke-width="5"/>
-            <path d="M-62 -92L-38 -126H38L62 -92" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.5"/>
-            <rect x="-62" y="-340" width="4" height="680" fill="#e4e5e8" opacity=".75"/>
-            <rect x="58" y="-340" width="4" height="680" fill="#e4e5e8" opacity=".55"/>
             <rect x="-44" y="-340" width="9" height="680" fill="#fff" opacity=".06"/>
           </g>
-          <g transform="translate(0 -24)">
+          <g>
             <rect x="-50" y="-50" width="100" height="100" rx="12" fill="#0a0a0c" fill-opacity=".55" stroke="#fff" stroke-opacity=".3" stroke-width="1.2"/>
             <svg x="-40" y="-40" width="80" height="80" viewBox="${viewBox}" overflow="visible">${body}</svg>
             <rect x="-50" y="-50" width="100" height="100" rx="12" fill="url(#${u}stickerGloss)"/>
           </g>
-          <text transform="translate(0 52) rotate(90)" x="0" y="0" dominant-baseline="central"
-                font-family="'Russo One', sans-serif" font-size="34" letter-spacing="3" fill="#f1f2f4">P28 / 70 FLEX</text>
         </g>
       </svg>`;
   }
