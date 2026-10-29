@@ -476,6 +476,10 @@
   function renderHome() {
     const sample = { text: '19', font: 'dangle', fill: '#00205B', outline: '#FFFFFF' };
     $('#howColour').innerHTML = stickerSVG(designOf(sample));
+    $('#howFonts').innerHTML = ['celly', 'dangle', 'twig'].map((id) => {
+      const f = fontFor(id);
+      return `<span class="${id === sample.font ? 'on' : ''}" style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</span>`;
+    }).join('');
     $('#howSwatches').innerHTML = ['#AF1E2D', '#00205B', '#006847', '#FFB81C', '#99D9D9']
       .map((hex) => `<span class="${hex === sample.fill ? 'on' : ''}" style="--c:${hex}"></span>`).join('');
     // Cropped so the sticker is the same size as in step 2.

@@ -835,8 +835,18 @@ img.photo { display: block; width: 100%; max-width: 100%; height: auto; object-f
 .mock-hint { color: var(--muted); font-size: 13px; font-weight: 600; }
 
 /* Step 2: the sticker with colour choices */
-.mock-pick { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7%; }
-.mock-sticker { height: 46%; aspect-ratio: 1; }
+.mock-pick { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5%; }
+.mock-sticker { height: 40%; aspect-ratio: 1; }
+.mock-fonts { display: flex; gap: 6px; }
+.mock-fonts span {
+  padding: 4px 12px;
+  border: 1px solid var(--field);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.mock-fonts span.on { border: 2px solid var(--ink); padding: 3px 11px; }
 .mock-sticker > svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.2)); }
 .mock-swatches { display: flex; gap: 10px; }
 .mock-swatches span { width: 18px; height: 18px; border-radius: 50%; background: var(--c); }
