@@ -456,6 +456,11 @@
 
   const menuBtn = $('#menuBtn');
   const nav = $('#nav');
+  const header = $('.site-header');
+  const syncHeader = () => header.classList.toggle('scrolled', window.scrollY > 4);
+  window.addEventListener('scroll', syncHeader, { passive: true });
+  syncHeader();
+
   menuBtn.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     menuBtn.setAttribute('aria-expanded', open);

@@ -46,7 +46,16 @@ a { color: inherit; }
   top: env(safe-area-inset-top, 0px);
   z-index: 20;
   background: #fff;
-  border-bottom: 1px solid var(--line);
+  transition: background-color 0.25s ease, -webkit-backdrop-filter 0.25s ease, backdrop-filter 0.25s ease;
+}
+/* Frosted glass once the page scrolls under it */
+.site-header.scrolled {
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header.scrolled { background: rgba(255, 255, 255, 0.94); }
 }
 
 .header-inner {
