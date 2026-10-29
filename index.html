@@ -19,6 +19,7 @@
         <a href="#about" data-nav="about">About</a>
         <a href="#design" data-nav="design">Design</a>
         <a href="#explore" data-nav="explore">Explore</a>
+        <a class="nav-mobile-only" href="#account" data-nav="account">Account</a>
       </nav>
 
       <div class="header-icons">
@@ -26,7 +27,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9.5h14l-1.2 9.6a2 2 0 0 1-2 1.7H8.2a2 2 0 0 1-2-1.7L5 9.5Z"/><path d="M9 9.5V7a3 3 0 0 1 6 0v2.5"/></svg>
           <span class="badge" id="cartCount" hidden>0</span>
         </button>
-        <button class="icon-btn account-btn" id="accountBtn" type="button" aria-label="Account">
+        <button class="icon-btn account-btn" id="accountBtn" type="button" aria-label="Account" data-nav="account">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5Z"/></svg>
         </button>
         <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
@@ -180,6 +181,7 @@
           </div>
 
           <div class="actions">
+            <button class="btn ghost" id="saveDesignBtn" type="button">Save design</button>
             <button class="btn primary" id="nextBtn" type="submit">Next</button>
           </div>
         </form>
@@ -366,6 +368,52 @@
       </div>
     </section>
 
+    <!-- Account: everything here is kept in this browser -->
+    <section class="page account" data-page="account" aria-labelledby="accountTitle" hidden>
+      <div class="container">
+        <div class="page-head">
+          <h1 class="page-title" id="accountTitle" tabindex="-1">Your account</h1>
+          <p class="page-sub">Your details, saved designs and orders are kept in this browser. Come back on the same device to pick up where you left off.</p>
+        </div>
+
+        <div class="account-grid">
+          <div class="account-main">
+            <section class="co-block" aria-labelledby="savedTitle">
+              <h2 class="co-title" id="savedTitle">Saved designs</h2>
+              <ul class="saved-grid" id="savedGrid"></ul>
+              <div class="account-empty" id="savedEmpty" hidden>
+                <p>No saved designs yet. Build one and tap “Save design” to keep it here.</p>
+                <a class="btn ghost" href="#design">Build a design</a>
+              </div>
+            </section>
+
+            <section class="co-block" aria-labelledby="ordersTitle">
+              <h2 class="co-title" id="ordersTitle">Orders</h2>
+              <ul class="order-list" id="orderList"></ul>
+              <p class="account-empty-text" id="ordersEmpty" hidden>You haven’t placed an order yet.</p>
+            </section>
+          </div>
+
+          <aside class="summary" aria-labelledby="detailsTitle">
+            <h2 class="co-title" id="detailsTitle">Your details</h2>
+            <form class="details-form" id="detailsForm" novalidate>
+              <label class="field" for="profileName">
+                <span>Name</span>
+                <input id="profileName" type="text" autocomplete="name">
+              </label>
+              <label class="field" for="profileEmail">
+                <span>Email</span>
+                <input id="profileEmail" type="email" autocomplete="email" inputmode="email" aria-describedby="profileError">
+              </label>
+              <p class="error" id="profileError" role="alert" hidden></p>
+              <button class="btn primary block" type="submit">Save details</button>
+              <p class="secure-note">We fill in this email at checkout, so your receipt and shipping updates go to the right inbox.</p>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </section>
+
     <!-- Thanks -->
     <section class="page thanks" data-page="thanks" aria-labelledby="thanksTitle" hidden>
       <div class="container thanks-inner">
@@ -373,6 +421,7 @@
           <svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9"/></svg>
         </div>
         <h1 class="page-title" id="thanksTitle" tabindex="-1">Your order’s in</h1>
+        <p class="order-no" id="thanksNo"></p>
         <p class="demo-banner" id="thanksDemo" hidden>This was a demo order. Payments aren’t connected yet, so nothing was charged.</p>
         <p class="page-sub" id="thanksSub">We’ll print your stickers and email you when they ship.</p>
         <ul class="co-items thanks-items" id="thanksItems"></ul>
@@ -386,7 +435,6 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <a class="brand small" href="#home">Digital Stick</a>
       <p class="footer-copy">© <span id="year">2026</span> Digital Stick</p>
     </div>
   </footer>

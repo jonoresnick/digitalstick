@@ -22,6 +22,7 @@ const FONTS = {
 const ALLOWED_COUNTRIES = ['CA', 'US'];
 
 const HEX = /^#[0-9A-F]{6}$/;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TEXT = /^[A-Z0-9]{1,2}$/;
 
 const json = (body, status = 200) =>
@@ -62,6 +63,10 @@ export default async (req) => {
   p.append('cancel_url', `${origin}/#checkout`);
   p.append('billing_address_collection', 'auto');
   p.append('allow_promotion_codes', 'true');
+  // Prefills checkout with the email saved on the account page.
+  if (typeof order.email === 'string' && order.email.length <= 254 && EMAIL.test(order.email)) {
+    p.append('customer_email', order.email);
+  }
   p.append('phone_number_collection[enabled]', 'false');
   ALLOWED_COUNTRIES.forEach((c, i) => p.append(`shipping_address_collection[allowed_countries][${i}]`, c));
 

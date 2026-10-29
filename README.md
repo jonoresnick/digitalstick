@@ -15,6 +15,7 @@ The site is one page with hash routes and no build step.
 | `#about` | Story, where the sticker goes, how to apply it, glossary, colour list, FAQ |
 | `#checkout` | Bag review, pack changes, shipping speed, order summary |
 | `#thanks` | Order confirmation |
+| `#account` | Your details, saved designs and order history, kept in this browser |
 
 ## Files
 
@@ -34,6 +35,10 @@ python3 -m http.server 8000
 ```
 
 Checkout runs in demo mode until you connect Stripe. The pay button goes to a confirmation page that says nothing was charged.
+
+## Accounts
+
+The Account page has no sign-in. A visitor's details, saved designs and orders are stored in their own browser (`localStorage`), so they're there when the same person comes back on the same device. The saved email is passed to Stripe to prefill checkout. Real sign-in that works across devices needs a user database, for example Netlify Identity, Supabase Auth or Shopify customer accounts.
 
 ## Taking payments with Stripe
 

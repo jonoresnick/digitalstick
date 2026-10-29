@@ -48,6 +48,10 @@
 
   const CART_KEY = 'digitalstick.cart';
   const ORDER_KEY = 'digitalstick.lastOrder';
+  const PROFILE_KEY = 'digitalstick.profile';
+  const DESIGNS_KEY = 'digitalstick.designs';
+  const ORDERS_KEY = 'digitalstick.orders';
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -456,7 +460,7 @@
     const open = nav.classList.toggle('open');
     menuBtn.setAttribute('aria-expanded', open);
   });
-  $('#accountBtn').addEventListener('click', () => toast('Accounts are coming soon. Your bag is saved on this device.'));
+  $('#accountBtn').addEventListener('click', () => { location.hash = 'account'; });
   $$('[data-terms]').forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
     termsDialog.showModal();
@@ -559,6 +563,111 @@
       </li>`).join('');
   }
 
+  // ---------- Account (kept in this browser) ----------
+
+  const load = (key, fallback) => {
+    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch (_) { return fallback; }
+  };
+  const store = (key, value) => {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+  };
+
+  let profile = load(PROFILE_KEY, { name: '', email: '' });
+  let savedDesigns = load(DESIGNS_KEY, []);
+  let orders = load(ORDERS_KEY, []);
+
+  const sameDesign = (a, b) => a.text === b.text && a.font === b.font && a.fill === b.fill && a.outline === b.outline;
+  const placedOn = (iso) => new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+
+  $('#saveDesignBtn').addEventListener('click', () => {
+    if (!state.text) {
+      els.textInput.focus();
+      toast('Enter your numbers or initials first');
+      return;
+    }
+    const design = currentDesign();
+    if (savedDesigns.some((d) => sameDesign(d, design))) {
+      toast('This design is already in your account');
+      return;
+    }
+    savedDesigns = [{ ...design, saved: new Date().toISOString() }, ...savedDesigns].slice(0, 60);
+    store(DESIGNS_KEY, savedDesigns);
+    toast(`Saved “${design.text}” to your account`);
+  });
+
+  function recordOrder(order) {
+    if (!order || !order.id) return;
+    orders = [order, ...orders.filter((o) => o.id !== order.id)].slice(0, 50);
+    store(ORDERS_KEY, orders);
+  }
+
+  function renderAccount() {
+    const first = profile.name.trim().split(/\s+/)[0];
+    $('#accountTitle').textContent = first ? `Hi, ${first}` : 'Your account';
+    $('#profileName').value = profile.name;
+    $('#profileEmail').value = profile.email;
+
+    $('#savedGrid').innerHTML = savedDesigns.map((d, i) => {
+      const design = designOf(d);
+      const font = fontFor(d.font);
+      return `
+        <li>
+          <button class="g-card" type="button" data-edit-design="${i}" aria-label="Edit “${d.text}” in ${font.name}, ${describe(design)}">
+            <span class="g-art">${stickerSVG(design)}</span>
+            <span class="g-meta"><strong>“${d.text}” · ${font.name}</strong><span>${describe(design)}</span></span>
+          </button>
+          <button class="saved-remove" type="button" data-remove-design="${i}">Remove</button>
+        </li>`;
+    }).join('');
+    $('#savedEmpty').hidden = savedDesigns.length > 0;
+
+    $('#orderList').innerHTML = orders.map((o) => `
+      <li class="order-card">
+        <div class="order-head">
+          <strong>Order ${o.id}</strong>
+          <span class="order-date">${placedOn(o.placed)}</span>
+          <span class="pill${o.demo ? '' : ' paid'}">${o.demo ? 'Demo' : 'Paid'}</span>
+          <strong class="order-total">${withCurrency(o.total)}</strong>
+        </div>
+        <ul class="co-items">${o.items.map((item, i) => itemRow(item, i, { editable: false })).join('')}</ul>
+      </li>`).join('');
+    $('#ordersEmpty').hidden = orders.length > 0;
+  }
+
+  $('#savedGrid').addEventListener('click', (e) => {
+    const edit = e.target.closest('[data-edit-design]');
+    const remove = e.target.closest('[data-remove-design]');
+    if (edit) {
+      loadDesign(savedDesigns[+edit.dataset.editDesign]);
+      location.hash = 'design';
+    } else if (remove) {
+      const [gone] = savedDesigns.splice(+remove.dataset.removeDesign, 1);
+      store(DESIGNS_KEY, savedDesigns);
+      renderAccount();
+      toast(`Removed “${gone.text}”`);
+    }
+  });
+
+  $('#detailsForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('#profileName').value.trim();
+    const email = $('#profileEmail').value.trim();
+    const error = $('#profileError');
+    if (email && !EMAIL.test(email)) {
+      error.textContent = 'Enter an email like name@example.com, or leave it blank.';
+      error.hidden = false;
+      $('#profileEmail').setAttribute('aria-invalid', 'true');
+      $('#profileEmail').focus();
+      return;
+    }
+    error.hidden = true;
+    $('#profileEmail').removeAttribute('aria-invalid');
+    profile = { name, email };
+    store(PROFILE_KEY, profile);
+    renderAccount();
+    toast('Details saved');
+  });
+
   // ---------- Checkout ----------
 
   let shipping = SHIPPING[0];
@@ -648,6 +757,8 @@
     payError.hidden = true;
 
     lastOrder = {
+      id: `DS-${Date.now().toString(36).toUpperCase()}`,
+      placed: new Date().toISOString(),
       items: cart.map((item) => ({ ...item })),
       shipping: shipping.id,
       total: subtotal() + shipping.price,
@@ -669,6 +780,7 @@
         body: JSON.stringify({
           items: cart.map(({ text, font, fill, outline, qty }) => ({ text, font, fill, outline, qty })),
           shipping: shipping.id,
+          email: profile.email || undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -683,6 +795,7 @@
   });
 
   function completeOrder() {
+    recordOrder(lastOrder);
     cart = [];
     saveCart();
     renderCart();
@@ -695,6 +808,7 @@
     if (!params.has('paid')) return;
     if (lastOrder) lastOrder.demo = false;
     saveLastOrder();
+    recordOrder(lastOrder);
     cart = [];
     saveCart();
     renderCart();
@@ -706,6 +820,7 @@
   function renderThanks() {
     const order = lastOrder;
     $('#thanksDemo').hidden = !(order && order.demo);
+    $('#thanksNo').textContent = order && order.id ? `Order ${order.id}` : '';
     $('#thanksItems').innerHTML = order ? order.items.map((item, i) => itemRow(item, i, { editable: false })).join('') : '';
     const ship = order && SHIPPING.find((o) => o.id === order.shipping);
     $('#thanksSub').textContent = ship
@@ -716,7 +831,7 @@
   // ---------- Router ----------
 
   const PAGES = $$('[data-page]');
-  const TITLES = { design: 'Design', order: 'Your design', explore: 'Explore', about: 'About', checkout: 'Checkout', thanks: 'Thanks' };
+  const TITLES = { design: 'Design', order: 'Your design', explore: 'Explore', about: 'About', checkout: 'Checkout', thanks: 'Thanks', account: 'Account' };
   let currentPage = null;
 
   function renderPage(id, { fresh = true } = {}) {
@@ -735,6 +850,7 @@
       case 'about': renderAbout(); break;
       case 'checkout': renderCheckout(); break;
       case 'thanks': renderThanks(); break;
+      case 'account': renderAccount(); break;
       default: break;
     }
   }
