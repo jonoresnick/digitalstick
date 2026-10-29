@@ -4,14 +4,14 @@ window.DigitalStick = (() => {
 
   // Each font is named after a hockey term.
   const FONTS = [
-    { id: 'beauty', name: 'Beauty', family: 'Bebas Neue',     weight: 400, meaning: 'The teammate everyone loves having in the room.' },
-    { id: 'celly',  name: 'Celly',  family: 'Yellowtail',     weight: 400, meaning: 'The celebration after you score.' },
-    { id: 'chirp',  name: 'Chirp',  family: 'Alfa Slab One',  weight: 400, meaning: 'Trash talk, usually from the bench.' },
-    { id: 'dangle', name: 'Dangle', family: 'Graduate',       weight: 400, meaning: 'A slick deke around a defender.' },
-    { id: 'flow',   name: 'Flow',   family: 'Kaushan Script', weight: 400, meaning: 'The hair sticking out the back of your helmet.' },
-    { id: 'snipe',  name: 'Snipe',  family: 'Abril Fatface',  weight: 400, meaning: 'A shot picked perfectly into the corner.' },
-    { id: 'twig',   name: 'Twig',   family: 'Fredoka',        weight: 700, meaning: 'Your stick.' },
-    { id: 'wheel',  name: 'Wheel',  family: 'Russo One',      weight: 400, meaning: 'To skate fast. “That kid can wheel.”' },
+    { id: 'beauty', name: 'Beauty', family: 'K2D',           weight: 800, meaning: 'The teammate everyone loves having in the room.' },
+    { id: 'celly',  name: 'Celly',  family: 'Oleo Script',   weight: 700, meaning: 'The celebration after you score.' },
+    { id: 'chirp',  name: 'Chirp',  family: 'Roboto Slab',   weight: 800, meaning: 'Trash talk, usually from the bench.' },
+    { id: 'dangle', name: 'Dangle', family: 'Bai Jamjuree',  weight: 700, meaning: 'A slick deke around a defender.' },
+    { id: 'flow',   name: 'Flow',   family: 'Merienda',      weight: 700, meaning: 'The hair sticking out the back of your helmet.' },
+    { id: 'snipe',  name: 'Snipe',  family: 'Chakra Petch',  weight: 700, meaning: 'A shot picked perfectly into the corner.' },
+    { id: 'twig',   name: 'Twig',   family: 'Modak',         weight: 400, meaning: 'Your stick.' },
+    { id: 'wheel',  name: 'Wheel',  family: 'Odibee Sans',   weight: 400, meaning: 'To skate fast. “That kid can wheel.”' },
   ];
 
   // Colours pulled from NHL team palettes.
