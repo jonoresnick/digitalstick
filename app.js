@@ -475,9 +475,11 @@
 
   function renderHome() {
     const sample = { text: '19', font: 'dangle', fill: '#00205B', outline: '#FFFFFF' };
-    $('#howText').innerHTML = logoSVG(designOf({ ...sample, fill: '#2A2D33', outline: null }));
     $('#howColour').innerHTML = stickerSVG(designOf(sample));
-    $('#howStick').innerHTML = stickSVG(designOf(sample));
+    $('#howSwatches').innerHTML = ['#AF1E2D', '#00205B', '#006847', '#FFB81C', '#99D9D9']
+      .map((hex) => `<span class="${hex === sample.fill ? 'on' : ''}" style="--c:${hex}"></span>`).join('');
+    // Cropped so the sticker is the same size as in step 2.
+    $('#howStick').innerHTML = stickSVG(designOf(sample), { frame: '55 91 290 218' });
 
     const tileColours = ['#AF1E2D', '#99D9D9', '#FFB81C', '#F74902', '#FFFFFF', '#B4975A', '#0038A8', '#CE1126'];
     $('#fontTiles').innerHTML = FONTS.map((f, i) => `

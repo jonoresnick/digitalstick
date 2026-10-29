@@ -798,19 +798,46 @@ img.photo { display: block; width: 100%; max-width: 100%; height: auto; object-f
 }
 .steps-list p { margin: 0; color: #5d626b; max-width: 36ch; }
 .step-visual {
+  position: relative;
   min-height: 0;
-  overflow: hidden;
   display: grid;
   place-items: center;
   aspect-ratio: 4 / 3;
-  padding: 18% 22%;
   border-radius: 24px;
   background: #fff;
   border: 1px solid var(--line);
   overflow: hidden;
 }
-.step-visual > svg { width: 100%; height: 100%; overflow: visible; }
-.step-visual.stick-mini { padding: 0; background: var(--panel); }
+.step-visual.stick-mini { background: #fff; }
+
+/* Step 1: a slice of the real input */
+.mock-field { display: flex; flex-direction: column; gap: 8px; width: 64%; }
+.mock-label { font-size: 13px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--ink); }
+.mock-input {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+  border: 2px solid var(--brand);
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px rgba(0, 169, 244, 0.14);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.mock-caret { width: 2px; height: 28px; margin-left: 3px; background: var(--ink); animation: caret 1.1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.mock-hint { color: var(--muted); font-size: 13px; font-weight: 600; }
+
+/* Step 2: the sticker with colour choices */
+.mock-pick { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7%; }
+.mock-sticker { height: 46%; aspect-ratio: 1; }
+.mock-sticker > svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.2)); }
+.mock-swatches { display: flex; gap: 10px; }
+.mock-swatches span { width: 18px; height: 18px; border-radius: 50%; background: var(--c); }
+.mock-swatches span.on { box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px var(--ink); }
+
+@media (prefers-reduced-motion: reduce) { .mock-caret { animation: none; } }
 
 .font-tiles {
   display: grid;
@@ -950,21 +977,47 @@ img.photo { display: block; width: 100%; max-width: 100%; height: auto; object-f
 .about-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: start;
+  gap: 56px;
+  align-items: center;
 }
+.about-copy { display: flex; flex-direction: column; gap: 36px; min-width: 0; }
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 32px;
+  max-width: 62ch;
+  margin: 0;
+}
+.spec-grid div { display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-top: 1px solid var(--line); }
+.spec-grid dt { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; }
+.spec-grid dd { margin: 0; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .prose { display: flex; flex-direction: column; gap: 16px; max-width: 62ch; font-size: 17px; line-height: 1.6; }
 .prose p { margin: 0; }
 .placement { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.placement-frame { position: relative; }
 .placement-card {
   width: 100%;
-  max-width: 420px;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-card);
+  aspect-ratio: 1;
+  border-radius: 28px;
   background: var(--panel);
   overflow: hidden;
+  object-position: 50% 44%;
 }
-.placement figcaption { max-width: 420px; color: #5d626b; font-size: 14px; }
+.placement-tag {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+.placement figcaption { color: #5d626b; font-size: 14px; }
 
 .about-section { margin-top: 64px; }
 

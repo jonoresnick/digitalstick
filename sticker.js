@@ -122,11 +122,12 @@ window.DigitalStick = (() => {
 
   // A plain black shaft with the 1" square sticker on it, where players put it.
   let stickSeq = 0;
-  function stickSVG(design) {
+  // `frame` crops the 400x400 scene, e.g. '55 91 290 218' for a 4:3 close-up of the sticker.
+  function stickSVG(design, { frame = '0 0 400 400' } = {}) {
     const { viewBox, body } = logoParts(design, { keyline: KEYLINE_W });
     const u = `st${++stickSeq}`;
     return `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="${frame}" aria-hidden="true">
         <defs>
           <linearGradient id="${u}stickLower" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="#45474d"/>

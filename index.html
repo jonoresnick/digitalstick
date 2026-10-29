@@ -62,17 +62,28 @@
           <h2 class="section-title">How it works</h2>
           <ol class="steps-list">
             <li>
-              <div class="step-visual" id="howText"></div>
+              <div class="step-visual" aria-hidden="true">
+                <div class="mock-field">
+                  <span class="mock-label">Numbers or initials</span>
+                  <span class="mock-input"><span>19</span><i class="mock-caret"></i></span>
+                  <span class="mock-hint">2 of 2 characters</span>
+                </div>
+              </div>
               <h3>Enter your numbers or initials</h3>
               <p>Two characters. Your number, your initials, or whatever the room calls you.</p>
             </li>
             <li>
-              <div class="step-visual" id="howColour"></div>
+              <div class="step-visual" aria-hidden="true">
+                <div class="mock-pick">
+                  <div class="mock-sticker" id="howColour"></div>
+                  <div class="mock-swatches" id="howSwatches"></div>
+                </div>
+              </div>
               <h3>Pick a font and your colours</h3>
               <p>Eight fonts named for the rink, and colours matched to NHL team hex codes.</p>
             </li>
             <li>
-              <div class="step-visual stick-mini" id="howStick"></div>
+              <div class="step-visual stick-mini" id="howStick" aria-hidden="true"></div>
               <h3>Stick it above the flex</h3>
               <p>Each pack is 1” x 1” vinyl. Put one on the lower shaft and keep spares for your next twig.</p>
             </li>
@@ -264,15 +275,26 @@
         </div>
 
         <div class="about-grid">
+          <div class="about-copy">
           <div class="prose">
             <p>Digital Stick started with a simple itch: sticks all look the same on the rack, and a strip of tape with your number in marker doesn’t last a week. We wanted something that looked like it came from the factory and still felt like yours.</p>
             <p>So we built a customizer. You choose two characters, a font, a fill colour and an outline. We print it on 1” vinyl and ship it in a pack, so you have one for every new twig this season.</p>
             <p>The fonts are named after the words you hear on the bench, and every colour comes straight from an NHL team palette, down to the hex code.</p>
           </div>
+          <dl class="spec-grid">
+            <div><dt>Size</dt><dd>1” x 1”</dd></div>
+            <div><dt>Material</dt><dd>Vinyl</dd></div>
+            <div><dt>Packs</dt><dd>6, 12, 24 or 48</dd></div>
+            <div><dt>Choices</dt><dd>8 fonts, 20 colours</dd></div>
+          </dl>
+          </div>
           <figure class="placement">
-            <img class="placement-card photo" src="assets/photos/sticks-jr-closeup.jpg" width="1050" height="1400" loading="lazy"
-                 alt="Close-up of JR stickers on two stick shafts, just above the 75 flex print">
-            <figcaption>Put it on the lower shaft, just above the curve and flex print. You see it every time you look down, and it stays clear of your grip and your blade tape.</figcaption>
+            <div class="placement-frame">
+              <img class="placement-card photo" src="assets/photos/sticks-jr-closeup.jpg" width="1050" height="1400" loading="lazy"
+                   alt="Close-up of JR stickers on two stick shafts, just above the 75 flex print">
+              <span class="placement-tag">Lower shaft, above the flex print</span>
+            </div>
+            <figcaption>You see it every time you look down, and it stays clear of your grip and your blade tape.</figcaption>
           </figure>
         </div>
 
