@@ -485,16 +485,23 @@
     // Cropped so the sticker is the same size as in step 2.
     $('#howStick').innerHTML = stickSVG(designOf(sample), { frame: '55 91 290 218' });
 
-    const tileColours = ['#AF1E2D', '#99D9D9', '#FFB81C', '#F74902', '#FFFFFF', '#B4975A', '#0038A8', '#CE1126'];
-    $('#fontTiles').innerHTML = FONTS.map((f, i) => `
+    // A different design on each tile so the fonts read as distinct.
+    const tiles = {
+      beauty: { text: 'AK', fill: '#AF1E2D', outline: null },
+      celly:  { text: '28', fill: '#99D9D9', outline: '#041E42' },
+      chirp:  { text: 'TB', fill: '#FFB81C', outline: null },
+      dangle: { text: '14', fill: '#F74902', outline: '#000000' },
+      flow:   { text: 'NY', fill: '#FFFFFF', outline: '#0038A8' },
+      snipe:  { text: '97', fill: '#B4975A', outline: null },
+      twig:   { text: 'TJ', fill: '#FFB81C', outline: '#000000' },
+      wheel:  { text: '61', fill: '#CE1126', outline: null },
+    };
+    $('#fontTiles').innerHTML = FONTS.map((f) => `
       <button class="font-tile" type="button" data-tile-font="${f.id}">
-        <span class="tile-art">${stickerSVG(designOf({ text: 'JR', font: f.id, fill: tileColours[i], outline: null }))}</span>
+        <span class="tile-art">${stickerSVG(designOf({ ...tiles[f.id], font: f.id }))}</span>
         <span class="tile-name" style="font-family:'${f.family}',sans-serif;font-weight:${f.weight}">${f.name}</span>
         <span class="tile-meaning">${f.meaning}</span>
       </button>`).join('');
-
-    $('#packList').innerHTML = PACKS.map((p) => `
-      <li><span class="pack-qty">${p.qty}</span><span class="pack-label">stickers</span><span class="pack-price">${money(p.price)}</span></li>`).join('');
   }
 
   $('#fontTiles').addEventListener('click', (e) => {
